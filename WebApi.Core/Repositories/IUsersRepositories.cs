@@ -9,9 +9,9 @@ namespace WebApi.Core.Repositories
     public interface IUsersRepositories
     {
 
-        Task<string> Add(User user);
+        Task<bool> Add(User[] user);
 
-        Task<User[]> Get();
+        Task<User[]> Get(FilterRequest? filterRequest);
 
         Task<User> Get(string idUser);
 

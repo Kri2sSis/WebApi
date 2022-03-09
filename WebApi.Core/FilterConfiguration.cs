@@ -8,10 +8,10 @@ namespace WebApi.Core
 {
     public class FilterConfiguration
     {
-        public string sex { get; set; } = null;
+        public string? Sex { get; set; }
 
-        public int ageMin { get; set; } = 0;
+        public int AgeMin { get; set; }
 
-        public int ageMax { get; set; } = 0;
+        public int AgeMax { get; set; }
     }
 }

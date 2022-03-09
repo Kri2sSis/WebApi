@@ -9,42 +9,40 @@ namespace Tele2Api
     {
         private string _urlGetUsers = "http://testlodtask20172.azurewebsites.net/task";
 
-        public User[] Get()
+        private HttpClient _client;
+        private Uri _url = new Uri("http://testlodtask20172.azurewebsites.net/task");
+
+        public Tele2ApiUsers()
+        {
+            _client = new HttpClient();
+        }
+
+        public async Task<User[]> Get()
         {
             List<User> users = new List<User>();
-            dynamic jsonresult = GetJson(_urlGetUsers);
 
-            foreach (var item in jsonresult)
+            var usersWithNotAge = await GetWithNotAge();
+            foreach (var user in usersWithNotAge)
             {
-                users.Add(new User
-                {
-                    UserId = item.id,
-                    UserFullName = item.name,
-                    Sex = item.sex,
-                    Age = GetAge(item.id.ToString())
-                });
+                var respons = await _client.GetAsync(_url + "/" + user.Id);
+                var userWithAge = await respons.Content.ReadAsStringAsync();
+                var userFull = JsonConvert.DeserializeObject<User>(userWithAge);
+                userFull.Id = user.Id;
+                users.Add(userFull);
             }
-
 
             return users.ToArray();
         }
 
-        public int GetAge(string id)
-        {
-            var result = GetJson(_urlGetUsers + '/' + id);
 
-            return result.age;
-        }
 
-        private dynamic GetJson(string url)
+        private async Task<User[]> GetWithNotAge()
         {
-            HttpWebRequest requet = (HttpWebRequest)WebRequest.Create(url);
-            var response = requet.GetResponse();
-            var resultResponse = response.GetResponseStream();
-            var result = new StreamReader(resultResponse).ReadToEnd();
-            response.Close();
-            dynamic jsonresult = JsonConvert.DeserializeObject(result);
-            return jsonresult;
+            var response = await _client.GetAsync(_url);
+            var usersData = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<User[]>(usersData);
+
+            return result;
         }
     }
 }

@@ -8,9 +8,8 @@ namespace WebApi.Core
 {
     public interface IUsersServices
     {
-        Task<string> Create(Repositories.User user);
 
-        Task<Repositories.User[]> Get(PaginationConfiguration pagination, FilterConfiguration filter);
+        Task<Repositories.User[]> Get(FilterRequest? filterRequest);
 
         Task<Repositories.User> Get(string userId);
 

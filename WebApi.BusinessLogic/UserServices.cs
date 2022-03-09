@@ -18,34 +18,18 @@ namespace WebApi.BusinessLogic
         }
 
 
-        public async Task<string> Create(User user)
+
+
+        public async Task<User[]> Get(FilterRequest filterRequest)
         {
-            if (user is null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            var existingUser = await _userRepository.Get(user.UserId);
-            if (existingUser is not null)
-            {
-                throw new InvalidOperationException("User alredy existing");
-            }
-
-            var createdUser = await _userRepository.Add(user);
-
-            return createdUser;
-
-        }
-
-        public async Task<User[]> Get(PaginationConfiguration pagination, FilterConfiguration filter)
-        {
-            var users = await _userRepository.Get();
+            var users = await _userRepository.Get(filterRequest);
             if(users == null)
             {
-                CreatUserTele2();
+                await CreatUserTele2();
+                return await _userRepository.Get(filterRequest);
             }
 
-            return await Filter(pagination, filter);
+            return users;
         }
 
         public async Task<User> Get(string userId)
@@ -57,58 +41,21 @@ namespace WebApi.BusinessLogic
             var user = await _userRepository.Get(userId);
             if (user == null)
             {
-                CreatUserTele2();
+                await CreatUserTele2();
             }
             user = await _userRepository.Get(userId);
 
             return user;
         }
 
-        private void CreatUserTele2()
+        private async Task<bool> CreatUserTele2()
         {
             
-            var usersTele2 = _tele2ITele2Api.Get();
-            foreach (var user in usersTele2)
-            {
-                _userRepository.Add(new User
-                {
-                    UserId = user.UserId,
-                    UserFullName = user.UserFullName,
-                    Sex = user.Sex,
-                    Age = user.Age
-                });
-            }
-        }
+            var usersTele2 = await _tele2ITele2Api.Get();
+            await _userRepository.Add(usersTele2);
 
-        private async Task<User[]> Filter(PaginationConfiguration pagination, FilterConfiguration filter)
-        {
-             User[] user = await _userRepository.Get();
-            if(!String.IsNullOrWhiteSpace(filter.sex))
-            {
-                if(filter.ageMin != default(int))
-                {
-                    user = user.Where(user => user.Age > filter.ageMin & user.Age < filter.ageMax & user.Sex == filter.sex).ToArray();
-                    return Pagination(pagination, user);
-                }
-                user = user.Where(x => x.Sex == filter.sex).ToArray();
-                return Pagination(pagination, user);
-            }
-            else if(filter.ageMin != default(int))
-            {
-                user = user.Where(user => user.Age > filter.ageMin & user.Age < filter.ageMax).ToArray();
-                return Pagination(pagination, user);
-            }
-            return Pagination(pagination, user);
+            return true;
         }
-
-        private User[] Pagination(PaginationConfiguration pagination, User[] users)
-        {
-            return users
-                .Skip((pagination.PageNumber - 1) * pagination.PageSize)
-                .Take(pagination.PageSize)
-                .ToArray();
-        }
-
        
     }
 }

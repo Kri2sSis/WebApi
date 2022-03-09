@@ -10,7 +10,7 @@ namespace WebApi.Core.Tele2Api
     public interface ITele2ApiUsers
     {
 
-        public User[] Get();
+        public Task<User[]> Get();
 
     }
 }

@@ -13,11 +13,11 @@ namespace WebApi.DataAccess.MSSQL.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(x => x.UserId);
+            builder.HasKey(x => x.Id);
 
 
-            builder.Property(x => x.UserId).HasMaxLength(100);
-            builder.Property(x => x.UserFullName).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Id).HasMaxLength(100);
+            builder.Property(x => x.Name).HasMaxLength(50).IsRequired();
             builder.Property(x => x.Sex).HasMaxLength(10).IsRequired();
 
 

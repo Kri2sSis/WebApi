@@ -21,37 +21,8 @@ namespace WebApi.BusinessLogic.XTest
             _userServices = new UserServices(_usersRepositoriesMock.Object, _tele2ApiUsersMock.Object);
         }
 
-        [Fact]
-        public async void Create_ValidUser_ShouldReturnUserId()
-        {
-            //arange
-            var expectedUserId = _fixture.Create<string>();
 
-            var user = _fixture.Build<User>()
-                                .Without(x => x.UserId)
-                                .Create();
 
-            _usersRepositoriesMock.Setup(x => x.Add(user)).ReturnsAsync(expectedUserId);
-
-            //act
-            var userId = await _userServices.Create(user);
-
-            //assert
-            Assert.Equal(expectedUserId, userId);
-            _usersRepositoriesMock.Verify(x=> x.Add(user), Times.Once);
-            _usersRepositoriesMock.Verify(x => x.Get(), Times.Once);
-            _tele2ApiUsersMock.Verify(x => x.Get(), Times.Once);
-        }
-
-        [Fact]
-        public async void Create_UserIsNull_ShouldThrowArgumentNullException()
-        {
-            //arange
-            //act
-            await Assert.ThrowsAsync<ArgumentNullException>(()=> _userServices.Create(null));
-            // assert
-            _usersRepositoriesMock.Verify(x=> x.Add(It.IsAny<User>()), Times.Never);
-        }
 
     }
 }

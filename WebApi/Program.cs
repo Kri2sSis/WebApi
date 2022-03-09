@@ -11,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<ContractMapperProfile>();
+    cfg.AddProfile<DataAccesseMappingProfile>();
+});
+
 builder.Services.AddScoped<IUsersRepositories, UsersRepositories>();
 builder.Services.AddScoped<IUsersServices, UserServices>();
 
@@ -18,8 +24,7 @@ builder.Services.AddTele2ApiUsers(builder.Configuration);
 
 builder.Services.AddDbContext<WebApiDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WebApi"),
-        x => x.MigrationsAssembly("WebApi.DataAccess.MSSQL"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebApi"));
 });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

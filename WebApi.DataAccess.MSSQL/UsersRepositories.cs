@@ -1,10 +1,12 @@
 ﻿
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApi.Core;
 using WebApi.Core.Repositories;
 
 namespace WebApi.DataAccess.MSSQL
@@ -12,75 +14,72 @@ namespace WebApi.DataAccess.MSSQL
     public class UsersRepositories : IUsersRepositories
     {
         private readonly WebApiDbContext _context;
+        private readonly IMapper _mapper;
 
-        public UsersRepositories(WebApiDbContext context)
+        public UsersRepositories(WebApiDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
 
-        public async Task<string> Add(User user)
+        public async Task<bool> Add(User[] users)
         {
-            if (user is null)
+            if (users is null)
             {
-                throw new ArgumentNullException(nameof(user));
+                throw new ArgumentNullException(nameof(users));
             }
 
-            var newUser = new Entities.User
-            {
-                UserId = user.UserId,
-                UserFullName = user.UserFullName,
-                Sex = user.Sex,
-                Age = user.Age
-            };
+            var newUser = _mapper.Map<User[], Entities.User[]>(users);
 
-            await _context.Users.AddAsync(newUser);
+            await _context.Users.AddRangeAsync(newUser);
             await _context.SaveChangesAsync();
 
-            return newUser.UserId;
+            return true;
         }
 
-        public async Task<User[]> Get()
+        public async Task<User[]> Get(FilterRequest? filterRequest)
         {
-            List<User> userCore = new List<User>();
-            var users = await _context.Users.AsNoTracking().ToArrayAsync();
-            if(users.Count() <= 1)
+            var pagination = filterRequest.PaginationConfiguration;
+            var filter = filterRequest.FilterConfiguration;
+            var query = _context.Users.AsNoTracking().AsQueryable();
+            if (!query.Any() || query == null)
             {
                 return null;
             }
-            foreach (var user in users)
+            if (filter != null)
             {
-                userCore.Add(new User
+                if (!string.IsNullOrWhiteSpace(filter.Sex))
                 {
-                    UserId = user.UserId,
-                    UserFullName=user.UserFullName,
-                    Sex=user.Sex,
-                    Age=user.Age
-                });
+                    query = query.Where(x => x.Sex == filter.Sex);
+                }
+                if(filter.AgeMin != default(int))
+                {
+                    query = query.Where(x => x.Age > filter.AgeMin & x.Age < filter.AgeMax);
+                }
             }
-            return userCore.ToArray();
+            var users = await query.Skip((pagination.PageNumber-1) * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToArrayAsync();
+
+            return _mapper.Map<Entities.User[], User[]>(users);
         }
 
-        public async Task<User> Get(string idUser)
+        public async Task<User> Get(string UserId)
         {
-            if (idUser is null)
+            if (String.IsNullOrWhiteSpace(UserId))
             {
-                throw new ArgumentNullException(nameof(idUser));
+                throw new ArgumentNullException(nameof(UserId));
             }
 
             var user = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.UserId == idUser);
+                .FirstOrDefaultAsync(x => x.Id == UserId);
             if (user is null)
             {
                 throw new InvalidOperationException("User not existed");
             }
-            return new User {
-                    UserId = user.UserId,
-                    UserFullName = user.UserFullName,
-                    Sex = user.Sex,
-                    Age = user.Age
-            };
+            return _mapper.Map<Entities.User, User>(user);
 
         }
     }
