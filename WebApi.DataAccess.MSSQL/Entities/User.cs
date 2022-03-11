@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebApi.DataAccess.MSSQL.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.DataAccess.MSSQL.Entities
 {
@@ -15,7 +9,7 @@ namespace WebApi.DataAccess.MSSQL.Entities
 
         public string Name { get; set; }
 
-        public string Sex { get; set; }
+        public Sex Sex { get; set; }
 
         public int Age { get; set; }
     }

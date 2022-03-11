@@ -4,7 +4,6 @@ using WebApi;
 using WebApi.BusinessLogic;
 using WebApi.Core;
 using WebApi.Core.Repositories;
-using WebApi.Core.Tele2Api;
 using WebApi.DataAccess.MSSQL;
 
 var builder = WebApplication.CreateBuilder(args);

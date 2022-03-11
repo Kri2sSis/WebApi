@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WebApi.Core
+﻿namespace WebApi.Core
 {
     public class PaginationConfiguration
     {
-		const int maxPageSize = 50;
-		public int PageNumber { get; set; } = 1;
+		const uint maxPageSize = 50;
+		public uint PageNumber { get; set; } = 1;
 
-		private int _pageSize = 10;
-		public int PageSize
+		private uint _pageSize = 10;
+		public uint PageSize
 		{
 			get
 			{

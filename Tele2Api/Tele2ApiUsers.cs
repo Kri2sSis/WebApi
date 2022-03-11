@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Net;
 using WebApi.Core.Repositories;
 using WebApi.Core.Tele2Api;
 

@@ -11,7 +11,7 @@ using WebApi.DataAccess.MSSQL;
 namespace WebApi.DataAccess.MSSQL.Migrations
 {
     [DbContext(typeof(WebApiDbContext))]
-    [Migration("20220309144736_Init")]
+    [Migration("20220311170842_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

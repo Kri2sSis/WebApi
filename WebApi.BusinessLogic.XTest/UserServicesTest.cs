@@ -2,7 +2,6 @@
 using Moq;
 using WebApi.Core.Repositories;
 using WebApi.Core.Tele2Api;
-using Xunit;
 
 namespace WebApi.BusinessLogic.XTest
 {

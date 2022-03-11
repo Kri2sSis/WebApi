@@ -1,5 +1,4 @@
-﻿using System;
-using WebApi.Core;
+﻿using WebApi.Core;
 using WebApi.Core.Repositories;
 using WebApi.Core.Tele2Api;
 

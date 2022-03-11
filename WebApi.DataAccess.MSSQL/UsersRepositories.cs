@@ -1,11 +1,6 @@
 ﻿
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebApi.Core;
 using WebApi.Core.Repositories;
 
@@ -51,15 +46,15 @@ namespace WebApi.DataAccess.MSSQL
             {
                 if (!string.IsNullOrWhiteSpace(filter.Sex))
                 {
-                    query = query.Where(x => x.Sex == filter.Sex);
+                    query = query.Where(x => (string)(object)x.Sex == filter.Sex);
                 }
                 if(filter.AgeMin != default(int))
                 {
                     query = query.Where(x => x.Age > filter.AgeMin & x.Age < filter.AgeMax);
                 }
             }
-            var users = await query.Skip((pagination.PageNumber-1) * pagination.PageSize)
-                .Take(pagination.PageSize)
+            var users = await query.Skip(((int)pagination.PageNumber-1) * (int)pagination.PageSize)
+                .Take((int)pagination.PageSize)
                 .ToArrayAsync();
 
             return _mapper.Map<Entities.User[], User[]>(users);
