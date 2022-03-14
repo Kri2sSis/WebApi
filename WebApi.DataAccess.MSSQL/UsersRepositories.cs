@@ -20,6 +20,8 @@ namespace WebApi.DataAccess.MSSQL
 
         public async Task<bool> Add(User[] users)
         {
+            if(_context.Users.Any())
+                return false;
             if (users is null)
             {
                 throw new ArgumentNullException(nameof(users));

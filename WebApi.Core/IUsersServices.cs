@@ -7,5 +7,7 @@
 
         Task<Repositories.User> Get(string userId);
 
+        Task<bool> CreatUserTele2();
+
     }
 }

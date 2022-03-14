@@ -22,11 +22,6 @@ namespace WebApi.BusinessLogic
         public async Task<User[]> Get(FilterRequest filterRequest)
         {
             var users = await _userRepository.Get(filterRequest);
-            if(users == null)
-            {
-                await CreatUserTele2();
-                return await _userRepository.Get(filterRequest);
-            }
 
             return users;
         }
@@ -38,16 +33,13 @@ namespace WebApi.BusinessLogic
                 throw new ArgumentNullException(nameof(userId));
             }
             var user = await _userRepository.Get(userId);
-            if (user == null)
-            {
-                await CreatUserTele2();
-            }
+
             user = await _userRepository.Get(userId);
 
             return user;
         }
 
-        private async Task<bool> CreatUserTele2()
+        public async Task<bool> CreatUserTele2()
         {
             
             var usersTele2 = await _tele2ITele2Api.Get();

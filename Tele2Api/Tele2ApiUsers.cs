@@ -18,19 +18,12 @@ namespace Tele2Api
 
         public async Task<User[]> Get()
         {
-            List<User> users = new List<User>();
 
             var usersWithNotAge = await GetWithNotAge();
-            foreach (var user in usersWithNotAge)
-            {
-                var respons = await _client.GetAsync(_url + "/" + user.Id);
-                var userWithAge = await respons.Content.ReadAsStringAsync();
-                var userFull = JsonConvert.DeserializeObject<User>(userWithAge);
-                userFull.Id = user.Id;
-                users.Add(userFull);
-            }
+            
+            var users = usersWithNotAge.Select(async x => await GetUser(x.Id)).Select(x => x.Result).ToArray();
 
-            return users.ToArray();
+            return users;
         }
 
 
@@ -42,6 +35,15 @@ namespace Tele2Api
             var result = JsonConvert.DeserializeObject<User[]>(usersData);
 
             return result;
+        }
+
+        private async Task<User> GetUser(string id)
+        {
+            var respons = await _client.GetAsync(_url + "/" + id);
+            var userWithAge = await respons.Content.ReadAsStringAsync();
+            var userFull = JsonConvert.DeserializeObject<User>(userWithAge);
+            userFull.Id = id;
+            return userFull;
         }
     }
 }

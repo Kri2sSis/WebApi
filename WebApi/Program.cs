@@ -7,8 +7,11 @@ using WebApi.Core.Repositories;
 using WebApi.DataAccess.MSSQL;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.ConfigureDefaults(args).ConfigureServices(services => services.AddHostedService<Worker>());
 
 // Add services to the container.
+
+
 
 builder.Services.AddAutoMapper(cfg =>
 {
@@ -16,10 +19,13 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<DataAccesseMappingProfile>();
 });
 
-builder.Services.AddScoped<IUsersRepositories, UsersRepositories>();
+builder.Services.AddHostedService<Worker>();
 builder.Services.AddScoped<IUsersServices, UserServices>();
+builder.Services.AddScoped<IUsersRepositories, UsersRepositories>();
 
 builder.Services.AddTele2ApiUsers(builder.Configuration);
+
+
 
 builder.Services.AddDbContext<WebApiDbContext>(options =>
 {

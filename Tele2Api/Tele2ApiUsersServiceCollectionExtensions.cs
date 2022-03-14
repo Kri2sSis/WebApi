@@ -8,7 +8,7 @@ namespace Tele2Api
     {
         public static void AddTele2ApiUsers(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ITele2ApiUsers, Tele2ApiUsers>();
+            services.AddScoped<ITele2ApiUsers, Tele2ApiUsers>();
         }
     }
 }
